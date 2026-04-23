@@ -1,0 +1,75 @@
+{
+  "apps": [
+    {
+      "name": "made-server",
+      "script": "./server-secure.js",
+      "description": "Servidor principal seguro",
+      
+      "instances": "max",
+      "exec_mode": "cluster",
+      "max_memory_restart": "500M",
+      
+      "error_file": "./logs/server-error.log",
+      "out_file": "./logs/server-out.log",
+      "log_date_format": "YYYY-MM-DD HH:mm:ss Z",
+      
+      "restart_delay": 5000,
+      "max_restarts": 10,
+      "min_uptime": "10s",
+      "autorestart": true,
+      
+      "watch": false,
+      "ignore_watch": ["node_modules", "logs", ".git"],
+      
+      "env": {
+        "NODE_ENV": "production",
+        "PORT": 3000,
+        "NODE_OPTIONS": "--max-old-space-size=1024"
+      },
+      
+      "kill_timeout": 5000,
+      "listen_timeout": 3000,
+      "shutdown_with_message": true,
+      
+      "exp_backoff_restart_delay": 100,
+      "max_consecutive_restarts": 3,
+      
+      "merge_logs": true
+    },
+    
+    {
+      "name": "monitor-service",
+      "script": "./monitor-recovery.js",
+      "description": "Servicio de monitoreo y auto-recuperación",
+      
+      "instances": 1,
+      "exec_mode": "fork",
+      "max_memory_restart": "200M",
+      
+      "error_file": "./logs/monitor-error.log",
+      "out_file": "./logs/monitor-out.log",
+      "log_date_format": "YYYY-MM-DD HH:mm:ss Z",
+      
+      "autorestart": true,
+      "restart_delay": 3000,
+      "max_restarts": 10,
+      "min_uptime": "10s",
+      
+      "env": {
+        "NODE_ENV": "production",
+        "SERVER_URL": "http://localhost:3000"
+      },
+      
+      "kill_timeout": 5000,
+      "listen_timeout": 3000
+    }
+  ],
+  
+  "ignore_patterns": [
+    "node_modules",
+    ".git",
+    "logs",
+    "*.swp",
+    "*.swo"
+  ]
+}
